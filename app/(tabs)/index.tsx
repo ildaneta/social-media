@@ -1,18 +1,38 @@
-import { StyleSheet } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
+import { Text, View } from "../../src/components/Themed";
+import { useEffect, useState } from "react";
+import { supabase } from "../../src/lib/initSupabase";
 
-import EditScreenInfo from "../../components/EditScreenInfo";
-import { Text, View } from "../../components/Themed";
+interface IPosts {
+  id: string;
+  created_at: string;
+  content: string;
+  image: string;
+}
 
 export default function TabOneScreen() {
+  const [posts, setPosts] = useState<Array<IPosts>>([]);
+
+  useEffect(() => {
+    const getPosts = async () => {
+      const { data, error } = await supabase.from("posts").select("*");
+      if (error) {
+        console.log("error: ", error);
+      } else {
+        setPosts(data as Array<IPosts>);
+      }
+    };
+
+    getPosts();
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
+      <FlatList
+        data={posts}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <Text>{item.content}</Text>}
       />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
     </View>
   );
 }
