@@ -2,32 +2,35 @@ import { FlatList, StyleSheet } from "react-native";
 import { Text, View } from "../../src/components/Themed";
 import { useEffect, useState } from "react";
 import { supabase } from "../../src/lib/initSupabase";
-
-interface IPosts {
-  id: string;
-  created_at: string;
-  content: string;
-  image: string;
-}
+import AddPostForm from "../../src/components/AddPostForm";
+import { Posts, getPosts } from "../../src/lib/api";
 
 export default function TabOneScreen() {
-  const [posts, setPosts] = useState<Array<IPosts>>([]);
+  const [posts, setPosts] = useState<Posts>([]);
 
   useEffect(() => {
-    const getPosts = async () => {
-      const { data, error } = await supabase.from("posts").select("*");
-      if (error) {
-        console.log("error: ", error);
-      } else {
-        setPosts(data as Array<IPosts>);
-      }
-    };
-
-    getPosts();
+    getPosts().then((data) => setPosts(data));
   }, []);
+
+  const handleSubmit = async (content: string) => {
+    const { data, error } = await supabase
+      .from("posts")
+      .insert({
+        content,
+      })
+      .select();
+
+    if (error) {
+      throw error;
+    } else {
+      setPosts([data[0], ...posts]);
+    }
+  };
 
   return (
     <View style={styles.container}>
+      <AddPostForm onSubmit={handleSubmit} />
+
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
@@ -42,14 +45,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
   },
 });
