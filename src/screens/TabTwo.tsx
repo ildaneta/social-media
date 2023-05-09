@@ -2,11 +2,13 @@ import { StyleSheet } from "react-native";
 
 import { Button, Text, View } from "../components/Themed";
 import { supabase } from "../lib/initSupabase";
+import { useUserContext } from "../hooks/userContext";
 
 export default function TabTwoScreen() {
+  const { profile } = useUserContext();
   return (
     <View style={styles.container}>
-      <Text>Nothing</Text>
+      <Text>{profile?.username}</Text>
       <Button title="Cerrar sesión" onPress={() => supabase.auth.signOut()} />
     </View>
   );
