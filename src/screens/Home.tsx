@@ -1,12 +1,12 @@
 import { FlatList, StyleSheet } from "react-native";
-import { View } from "../../src/components/Themed";
-import { useEffect, useState } from "react";
-import { supabase } from "../../src/lib/initSupabase";
-import AddPostForm from "../../src/components/AddPostForm";
-import { Posts, getPosts } from "../../src/lib/api";
-import PostCard from "../../src/components/PostCard";
+import { View } from "../components/Themed";
+import { useState, useEffect } from "react";
+import { supabase } from "../lib/initSupabase";
+import AddPostForm from "../components/AddPostForm";
+import { getPosts, Posts } from "../lib/api";
+import PostCard from "../components/PostCard";
 
-export default function Home() {
+export default function HomeScreen() {
   const [posts, setPosts] = useState<Posts>([]);
 
   useEffect(() => {
@@ -16,13 +16,10 @@ export default function Home() {
   const handleSubmit = async (content: string) => {
     const { data, error } = await supabase
       .from("posts")
-      .insert({
-        content,
-      })
+      .insert({ content })
       .select();
-
     if (error) {
-      throw error;
+      console.log(error);
     } else {
       setPosts([data[0], ...posts]);
     }
@@ -31,12 +28,11 @@ export default function Home() {
   return (
     <View style={styles.container}>
       <AddPostForm onSubmit={handleSubmit} />
-
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <PostCard post={item} />}
         contentContainerStyle={{ paddingTop: 8 }}
+        renderItem={({ item }) => <PostCard post={item} />}
       />
     </View>
   );
