@@ -16,3 +16,4 @@ export const getPosts = async () => {
 }
 
 export type Posts = Awaited<ReturnType<typeof getPosts>>
+export type Post = Posts[number]
