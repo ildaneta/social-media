@@ -1,18 +1,18 @@
 import {
   Text as DefaultText,
-  useColorScheme,
   View as DefaultView,
   TextInput as DefaultTextInput,
   Button as DefaultButton,
 } from "react-native";
 
 import Colors from "../constants/Colors";
+import useColorScheme from "../hooks/useColorScheme";
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
   colorName: keyof typeof Colors.light & keyof typeof Colors.dark
 ) {
-  const theme = useColorScheme() ?? "light";
+  const theme = useColorScheme();
   const colorFromProps = props[theme];
 
   if (colorFromProps) {
@@ -66,12 +66,17 @@ export function Button(props: ButtonProps) {
 
 export function TextInput(props: TextInputProps) {
   const { style } = props;
-
+  const color = useThemeColor({}, "text");
+  const backgroundColor = useThemeColor({}, "card");
+  const placeholderColor = useThemeColor(
+    { light: "#6b7280", dark: "#9ca3af" },
+    "text"
+  );
   const primary = useThemeColor({}, "primary");
-
   return (
     <DefaultTextInput
-      style={[style]}
+      style={[{ backgroundColor, color, fontSize: 16, padding: 8 }, style]}
+      placeholderTextColor={placeholderColor}
       cursorColor={primary}
       selectionColor={primary}
       {...props}
