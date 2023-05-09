@@ -1,11 +1,12 @@
 import { FlatList, StyleSheet } from "react-native";
-import { Text, View } from "../../src/components/Themed";
+import { View } from "../../src/components/Themed";
 import { useEffect, useState } from "react";
 import { supabase } from "../../src/lib/initSupabase";
 import AddPostForm from "../../src/components/AddPostForm";
 import { Posts, getPosts } from "../../src/lib/api";
+import PostCard from "../../src/components/PostCard";
 
-export default function TabOneScreen() {
+export default function Home() {
   const [posts, setPosts] = useState<Posts>([]);
 
   useEffect(() => {
@@ -34,7 +35,8 @@ export default function TabOneScreen() {
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <Text>{item.content}</Text>}
+        renderItem={({ item }) => <PostCard post={item} />}
+        contentContainerStyle={{ paddingTop: 8 }}
       />
     </View>
   );
@@ -43,7 +45,5 @@ export default function TabOneScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
   },
 });
