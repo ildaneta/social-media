@@ -14,11 +14,8 @@ import useColorScheme from "../hooks/useColorScheme";
 import HomeScreen from "../screens/Home";
 import TabTwoScreen from "../screens/TabTwo";
 import AuthScreen from "../screens/Auth";
-import {
-  RootStackParamList,
-  RootTabParamList,
-  RootTabScreenProps,
-} from "../types/route";
+import { RootStackParamList, RootTabParamList } from "../types/route";
+import { useUserContext } from "../hooks/userContext";
 
 const darkTheme = {
   ...DarkTheme,
@@ -50,14 +47,10 @@ export default function Navigation({
   );
 }
 
-/**
- * A root stack navigator is often used for displaying modals on top of all other content.
- * https://reactnavigation.org/docs/modal
- */
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
-  const session = true;
+  const { session } = useUserContext();
 
   return (
     <Stack.Navigator>
@@ -70,10 +63,6 @@ function RootNavigator() {
   );
 }
 
-/**
- * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
- * https://reactnavigation.org/docs/bottom-tab-navigator
- */
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
@@ -90,7 +79,7 @@ function BottomTabNavigator() {
       <BottomTab.Screen
         name="Home"
         component={HomeScreen}
-        options={({ navigation }: RootTabScreenProps<"Home">) => ({
+        options={() => ({
           title: "Supabook",
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         })}
@@ -107,9 +96,6 @@ function BottomTabNavigator() {
   );
 }
 
-/**
- * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
   color: string;
