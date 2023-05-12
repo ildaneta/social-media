@@ -1,9 +1,10 @@
+import { Database } from "../types/supabase";
 import { supabase } from "./initSupabase";
 
 export const getPosts = async () => {
   const { data, error } = await supabase
     .from("posts")
-    .select("*")
+    .select("*, profile: profiles(username)")
     .order("created_at", {
       ascending: false,
     });
@@ -17,3 +18,4 @@ export const getPosts = async () => {
 
 export type Posts = Awaited<ReturnType<typeof getPosts>>
 export type Post = Posts[number]
+export type Profile = Database['public']['Tables']['profiles']['Row']

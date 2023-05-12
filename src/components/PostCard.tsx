@@ -1,15 +1,20 @@
 import React from "react";
 import { StyleSheet, Image, TouchableOpacity } from "react-native";
-import { Post } from "../lib/api";
+import { Post, Profile } from "../lib/api";
 import { Card, Text, View, useThemeColor } from "./Themed";
 import { FontAwesome } from "@expo/vector-icons";
+import { useUserContext } from "../hooks/userContext";
 
 interface Props {
   post: Post;
+  onDelete: () => void;
 }
 
-const PostCard = ({ post }: Props): JSX.Element => {
+const PostCard = ({ post, onDelete }: Props): JSX.Element => {
   const primary = useThemeColor({}, "primary");
+  const { username } = post.profile as Profile;
+  const { image, content } = post;
+  const { profile } = useUserContext();
 
   return (
     <Card style={styles.container}>
@@ -18,22 +23,28 @@ const PostCard = ({ post }: Props): JSX.Element => {
           source={{ uri: "https://github.com/ildaneta.png" }}
           style={styles.avatar}
         />
-        <Text style={styles.username}>Ilda Neta</Text>
+        <Text style={styles.username}>{username}</Text>
       </Card>
 
-      {post.image && (
+      {image && (
         <View style={styles.imageContainer}>
-          <Image source={{ uri: post.image }} style={styles.image} />
+          <Image source={{ uri: image }} style={styles.image} />
         </View>
       )}
 
       <Card style={styles.content}>
-        <Text style={styles.contentText}>{post.content}</Text>
+        <Text style={styles.contentText}>{content}</Text>
 
         <Card style={styles.footer}>
           <TouchableOpacity>
-            <FontAwesome name="heart-o" size={24} color={primary} />
+            <FontAwesome name="heart-o" size={20} color={primary} />
           </TouchableOpacity>
+
+          {profile?.id === post.user_id && (
+            <TouchableOpacity onPress={onDelete}>
+              <FontAwesome name="trash" size={20} color={primary} />
+            </TouchableOpacity>
+          )}
         </Card>
       </Card>
     </Card>
@@ -83,7 +94,9 @@ const styles = StyleSheet.create({
   },
 
   footer: {
-    paddingTop: 8,
+    paddingTop: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });
 
