@@ -7,15 +7,11 @@ import {
   useState,
 } from "react";
 import { supabase } from "../lib/initSupabase";
-
-export interface IUserProfile {
-  username: string;
-  avatarUrl?: string;
-}
+import { Profile } from "../lib/api";
 
 export interface IUserInfo {
   session: Session | null;
-  profile: IUserProfile | null;
+  profile: Profile | null;
 }
 
 const UserContext = createContext<IUserInfo>({
