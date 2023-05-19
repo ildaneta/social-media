@@ -1,4 +1,4 @@
-import { FontAwesome } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   NavigationContainer,
@@ -12,10 +12,10 @@ import { ColorSchemeName } from "react-native";
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
 import HomeScreen from "../screens/Home";
-import TabTwoScreen from "../screens/TabTwo";
 import AuthScreen from "../screens/Auth";
 import { RootStackParamList, RootTabParamList } from "../types/route";
 import { useUserContext } from "../hooks/userContext";
+import Profile from "../screens/Profile";
 
 const darkTheme = {
   ...DarkTheme,
@@ -80,16 +80,26 @@ function BottomTabNavigator() {
         name="Home"
         component={HomeScreen}
         options={() => ({
-          title: "Supabook",
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          title: "Home",
+          tabBarIcon: ({ color, focused }) =>
+            focused ? (
+              <TabBarIcon name="home" color={color} />
+            ) : (
+              <TabBarIcon name="home-outline" color={color} />
+            ),
         })}
       />
       <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoScreen}
+        name="Profile"
+        component={Profile}
         options={{
-          title: "Tab Two",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: "Profile",
+          tabBarIcon: ({ color, focused }) =>
+            focused ? (
+              <TabBarIcon name="ios-person" color={color} />
+            ) : (
+              <TabBarIcon name="md-person-outline" color={color} />
+            ),
         }}
       />
     </BottomTab.Navigator>
@@ -97,8 +107,8 @@ function BottomTabNavigator() {
 }
 
 function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
+  name: React.ComponentProps<typeof Ionicons>["name"];
   color: string;
 }) {
-  return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
+  return <Ionicons size={30} style={{ marginBottom: -3 }} {...props} />;
 }
