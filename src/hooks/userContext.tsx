@@ -8,10 +8,13 @@ import {
 } from "react";
 import { supabase } from "../lib/initSupabase";
 import { Profile } from "../lib/api";
+import { Alert } from "react-native";
 
 export interface IUserInfo {
   session: Session | null;
   profile: Profile | null;
+  loading?: boolean;
+  saveProfileUpdate?: (updatedProfile: Profile) => void;
 }
 
 const UserContext = createContext<IUserInfo>({
@@ -20,6 +23,7 @@ const UserContext = createContext<IUserInfo>({
 });
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [loading, setLoading] = useState(false);
   const [userInfo, setUserInfo] = useState<IUserInfo>({
     session: null,
     profile: null,
@@ -40,6 +44,25 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (data) {
       setUserInfo({ ...userInfo, profile: data[0] });
     }
+  };
+
+  const saveProfileUpdate = async (updateProfile: Profile) => {
+    setLoading(true);
+
+    // update a data into supabase table
+    const { error, data } = await supabase
+      .from("profiles")
+      .update(updateProfile)
+      .eq("id", userInfo.profile?.id);
+
+    if (error) {
+      Alert.alert("Server error updating data", error.message);
+    } else {
+      Alert.alert("Username update with success!");
+
+      getProfile();
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -68,7 +91,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [userInfo.session]);
 
   return (
-    <UserContext.Provider value={userInfo}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ ...userInfo, loading, saveProfileUpdate }}>
+      {children}
+    </UserContext.Provider>
   );
 };
 
