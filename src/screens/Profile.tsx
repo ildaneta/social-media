@@ -3,12 +3,13 @@ import { useUserContext } from "../hooks/userContext";
 import ProfileForm from "../components/ProfileForm";
 
 const Profile = () => {
-  const { profile } = useUserContext();
+  const { profile, loading, saveProfileUpdate } = useUserContext();
+
   return (
     <ProfileForm
       profile={profile}
-      loading={false}
-      onSave={() => {}}
+      loading={loading!}
+      onSave={saveProfileUpdate}
       onLogout={() => supabase.auth.signOut()}
     />
   );
