@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Image, TouchableOpacity } from "react-native";
-import { Post, Profile } from "../lib/api";
+import { Post, getAvatar } from "../lib/api";
 import { Card, Text, View, useThemeColor } from "./Themed";
 import { FontAwesome } from "@expo/vector-icons";
 import { useUserContext } from "../hooks/userContext";
@@ -11,19 +11,28 @@ interface Props {
 }
 
 const PostCard = ({ post, onDelete }: Props): JSX.Element => {
+  const [avatarUri, setAvatarUri] = useState("");
+
   const primary = useThemeColor({}, "primary");
-  const { username } = post.profile as Profile;
   const { image, content } = post;
   const { profile } = useUserContext();
+
+  if (profile?.avatar_url) {
+    getAvatar(profile.avatar_url).then(setAvatarUri);
+  }
 
   return (
     <Card style={styles.container}>
       <Card style={styles.header}>
         <Image
-          source={{ uri: "https://github.com/ildaneta.png" }}
+          source={{
+            uri: avatarUri
+              ? avatarUri
+              : "https://github.com/ildaneta/gopizza/assets/21963291/98686857-13b0-4b89-ac64-1e0eac69e03e",
+          }}
           style={styles.avatar}
         />
-        <Text style={styles.username}>{username}</Text>
+        <Text style={styles.username}>{profile?.username}</Text>
       </Card>
 
       {image && (
