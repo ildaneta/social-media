@@ -14,6 +14,29 @@ export const getPosts = async () => {
   } else {
     return data
   }
+};
+
+export const getAvatar = async (path: string): Promise<string> => {
+  try {
+    const { data, error } = await supabase.storage
+      .from("avatars")
+      .download(path);
+
+    if (error) throw error;
+
+    const fr = new FileReader();
+
+    fr.readAsDataURL(data);
+
+    return new Promise((resolve) => {
+      fr.onload = () => {
+        resolve(fr.result as string);
+      };
+    });
+  } catch (error) {
+    console.log('Error getting avatar: ', error);
+    return '';
+  }
 }
 
 export type Posts = Awaited<ReturnType<typeof getPosts>>
